@@ -4,8 +4,12 @@ Biome is a plane world generation tool written in Go (Golang).
 # Installation
 Installation is done using `go get`.
 ```
-go get -u git@github.com:tomowarkar/biome.git
+go get -u github.com/tomowarkar/biome
 ```
+
+# Godoc
+https://godoc.org/github.com/tomowarkar/biome
+
 # Quick start
 ```
 # assume the following codes in example.go file
@@ -22,14 +26,15 @@ import (
 )
 
 func main() {
-	b := biome.NewWorld(5, 5)
-	b.RandIntn(3, 0)
+	b := biome.NewWorld(5, 8)
+	b.RandIntn(4, time.Now().UnixNano())
 	b.Show()
 
 	d := biome.NewDicts()
-	d.Set(0, biome.PickColor("khaki"))
-	d.Set(1, biome.PickColor("darkgoldenrod"))
-	d.Set(2, biome.PickColor("royalblue"))
+	d.Set(0, biome.Colors["khaki"])
+	d.Set(1, biome.Colors["darkgoldenrod"])
+	d.Set(2, biome.Colors["royalblue"])
+	d.Set(3, biome.Colors["seagreen"])
 	fmt.Println(d)
 
 	err := b.ToPng(100, d, "image")
