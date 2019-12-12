@@ -19,13 +19,13 @@ func DefaultDicts() Dicts {
 		if 240 <= i {
 			d.Set(i, color.RGBA{255, 255, 255, 255})
 		} else if 180 <= i {
-			d.Set(i, PickColor("seagreen"))
+			d.Set(i, Colors["seagreen"])
 		} else if 150 <= i {
-			d.Set(i, PickColor("darkgoldenrod"))
+			d.Set(i, Colors["darkgoldenrod"])
 		} else if 130 <= i {
-			d.Set(i, PickColor("khaki"))
+			d.Set(i, Colors["khaki"])
 		} else {
-			d.Set(i, PickColor("royalblue"))
+			d.Set(i, Colors["royalblue"])
 		}
 	}
 	return d
@@ -42,9 +42,4 @@ var Colors = map[string]color.RGBA{
 	"darkgoldenrod": color.RGBA{184, 134, 11, 255},
 	"royalblue":     color.RGBA{65, 105, 225, 255},
 	"seagreen":      color.RGBA{46, 139, 87, 255},
-}
-
-// PickColor ...
-func PickColor(color string) color.RGBA {
-	return Colors[color]
 }

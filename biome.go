@@ -34,7 +34,6 @@ func (f *field) Show() {
 	for i := 0; i < f.height; i++ {
 		fmt.Println(f.field[i*f.width : (i+1)*f.width])
 	}
-	fmt.Println(f.d8(3, 1))
 }
 
 func (f *field) RandIntn(n int, seed int64) {
