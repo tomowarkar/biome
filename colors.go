@@ -42,4 +42,7 @@ var Colors = map[string]color.RGBA{
 	"darkgoldenrod": color.RGBA{184, 134, 11, 255},
 	"royalblue":     color.RGBA{65, 105, 225, 255},
 	"seagreen":      color.RGBA{46, 139, 87, 255},
+	"cyan":          color.RGBA{0, 255, 255, 255},
+	"magenta":       color.RGBA{255, 0, 255, 255},
+	"yellow":        color.RGBA{255, 255, 0, 255},
 }
