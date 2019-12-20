@@ -62,11 +62,30 @@ func main() {
 	world.ToPng(10, d, "image")
 }
 ```
+### maze
+```go
+package main
+
+import (
+	"github.com/tomowarkar/biome/maze"
+)
+
+func main() {
+	m := maze.NewMaze(48, 60)
+	m.StickDown(0)
+	m.Solve()
+	m.ToPng(10, "maze1")
+	m.Digging(0)
+	m.Solve()
+	m.ToPng(10, "maze2")
+}
+```
 ## examples
 |                                                    |                                                    |                                                     |
 | -------------------------------------------------- | -------------------------------------------------- | --------------------------------------------------- |
 | <img src="assets/examples/image5.png" width="200"> | <img src="assets/examples/image4.png" width="200"> | <img src="assets/examples/example.png" width="200"> |
 | <img src="assets/examples/image.png" width="200">  | <img src="assets/examples/image3.png" width="200"> | <img src="assets/examples/image2.png" width="200">  |
+| <img src="assets/examples/maze.png" width="200">   | <img src="assets/examples/maze1.png" width="200">  | <img src="assets/examples/maze2.png" width="200">   |
 
 # License
 Biome is free and open-source software licensed under  the Boost Software License, Version 1.0.(See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
