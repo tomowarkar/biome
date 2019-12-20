@@ -16,6 +16,7 @@ const (
 // Maze :
 type Maze interface {
 	StickDown(seed int64)
+	Digging(seed int64)
 	Solve()
 }
 
@@ -165,4 +166,63 @@ func (m *maze) Solve() {
 		}
 	}
 	m.plt()
+}
+
+func (m *maze) Digging(seed int64) {
+	rand.Seed(seed)
+	for y := 0; y < m.h; y++ {
+		for x := 0; x < m.w; x++ {
+			if x == 0 || y == 0 || x == m.w-1 || y == m.h-1 {
+				m.setObj(x, y, path)
+			} else {
+				m.setObj(x, y, wall)
+			}
+		}
+	}
+	m.dig(1, 1)
+	for y := 0; y < m.h; y++ {
+		for x := 0; x < m.w; x++ {
+			if x == 0 || y == 0 || x == m.w-1 || y == m.h-1 {
+				m.setObj(x, y, wall)
+			}
+		}
+	}
+	m.plt()
+}
+
+func (m *maze) dig(x, y int) {
+	cands := []p{{x, y}}
+	for len(cands) > 0 {
+		n := rand.Intn(len(cands))
+		cand := cands[n]
+		for {
+			var dirs []p
+			var dirs2 []p
+			if m.at(cand.x, cand.y-1) == wall && m.at(cand.x, cand.y-2) == wall {
+				dirs = append(dirs, up)
+				dirs2 = append(dirs2, p{0, -2})
+			}
+			if m.at(cand.x+1, cand.y) == wall && m.at(cand.x+2, cand.y) == wall {
+				dirs = append(dirs, right)
+				dirs2 = append(dirs2, p{2, 0})
+			}
+			if m.at(cand.x, cand.y+1) == wall && m.at(cand.x, cand.y+2) == wall {
+				dirs = append(dirs, down)
+				dirs2 = append(dirs2, p{0, 2})
+			}
+			if m.at(cand.x-1, cand.y) == wall && m.at(cand.x-2, cand.y) == wall {
+				dirs = append(dirs, left)
+				dirs2 = append(dirs2, p{-2, 0})
+			}
+			if len(dirs) == 0 {
+				cands = append(cands[:n], cands[n+1:]...)
+				break
+			}
+			m.setObj(cand.x, cand.y, path)
+			nn := rand.Intn(len(dirs))
+			m.setObj(cand.x+dirs[nn].x, cand.y+dirs[nn].y, path)
+			m.setObj(cand.x+dirs2[nn].x, cand.y+dirs2[nn].y, path)
+			cands = append(cands, p{cand.x + dirs2[nn].x, cand.y + dirs2[nn].y})
+		}
+	}
 }
