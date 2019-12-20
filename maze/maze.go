@@ -2,9 +2,14 @@ package maze
 
 import (
 	"fmt"
+	"image"
+	"image/png"
 	"math/rand"
+	"os"
 	"strconv"
 	"strings"
+
+	"github.com/tomowarkar/biome"
 )
 
 const (
@@ -18,6 +23,7 @@ type Maze interface {
 	StickDown(seed int64)
 	Digging(seed int64)
 	Solve()
+	ToPng(scale int, dirPath string) error
 }
 
 type maze struct {
@@ -225,4 +231,31 @@ func (m *maze) dig(x, y int) {
 			cands = append(cands, p{cand.x + dirs2[nn].x, cand.y + dirs2[nn].y})
 		}
 	}
+}
+
+func (m *maze) ToPng(scale int, dirPath string) error {
+	d := biome.NewDicts()
+	d.Set(wall, biome.Colors["darkgoldenrod"])
+	d.Set(path, biome.Colors["khaki"])
+	d.Set(route, biome.Colors["magenta"])
+
+	img := image.NewRGBA(image.Rect(0, 0, m.w*scale, m.h*scale))
+	for x := 0; x < m.w*scale; x++ {
+		for y := 0; y < m.h*scale; y++ {
+			if val, ok := d[m.data[y/scale*m.w+x/scale]]; ok {
+				img.Set(x, y, val)
+			}
+		}
+	}
+	return encodePng(img, dirPath)
+}
+
+func encodePng(img *image.RGBA, path string) (err error) {
+	f, err := os.Create(path + ".png")
+	if err != nil {
+		return
+	}
+	defer f.Close()
+	png.Encode(f, img)
+	return
 }
