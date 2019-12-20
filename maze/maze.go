@@ -221,7 +221,12 @@ func (m *maze) dig(x, y int) {
 				dirs2 = append(dirs2, p{-2, 0})
 			}
 			if len(dirs) == 0 {
-				cands = append(cands[:n], cands[n+1:]...)
+				for i, v := range cands {
+					if v == cand {
+						cands = append(cands[:i], cands[i+1:]...)
+						break
+					}
+				}
 				break
 			}
 			m.setObj(cand.x, cand.y, path)
@@ -229,6 +234,7 @@ func (m *maze) dig(x, y int) {
 			m.setObj(cand.x+dirs[nn].x, cand.y+dirs[nn].y, path)
 			m.setObj(cand.x+dirs2[nn].x, cand.y+dirs2[nn].y, path)
 			cands = append(cands, p{cand.x + dirs2[nn].x, cand.y + dirs2[nn].y})
+			cand = p{cand.x + dirs2[nn].x, cand.y + dirs2[nn].y}
 		}
 	}
 }
