@@ -81,11 +81,12 @@ func main() {
 }
 ```
 ## examples
-|                                                    |                                                    |                                                     |
-| -------------------------------------------------- | -------------------------------------------------- | --------------------------------------------------- |
-| <img src="assets/examples/image5.png" width="200"> | <img src="assets/examples/image4.png" width="200"> | <img src="assets/examples/example.png" width="200"> |
-| <img src="assets/examples/image.png" width="200">  | <img src="assets/examples/image3.png" width="200"> | <img src="assets/examples/image2.png" width="200">  |
-| <img src="assets/examples/maze.png" width="200">   | <img src="assets/examples/maze1.png" width="200">  | <img src="assets/examples/maze2.png" width="200">   |
+|                 |                                                    |                                                    |                                                     |
+| --------------- | -------------------------------------------------- | -------------------------------------------------- | --------------------------------------------------- |
+| random dots     | <img src="assets/examples/image5.png" width="200"> | <img src="assets/examples/image4.png" width="200"> | <img src="assets/examples/example.png" width="200"> |
+| fractal islands | <img src="assets/examples/image.png" width="200">  | <img src="assets/examples/image3.png" width="200"> | <img src="assets/examples/image2.png" width="200">  |
+| maze            | <img src="assets/examples/maze.png" width="200">   | <img src="assets/examples/maze1.png" width="200">  | <img src="assets/examples/maze2.png" width="200">   |
+| gifs            | <img src="assets/examples/maze.gif" width="200">   | <img src="assets/examples/dig1.gif" width="200">   | <img src="assets/examples/stick1.gif" width="200">  |
 
 # License
 Biome is free and open-source software licensed under  the Boost Software License, Version 1.0.(See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
