@@ -3,6 +3,8 @@ package maze
 import (
 	"fmt"
 	"image"
+	"image/color"
+	"image/gif"
 	"image/png"
 	"math/rand"
 	"os"
@@ -24,6 +26,8 @@ type Maze interface {
 	Digging(seed int64)
 	Solve()
 	ToPng(scale int, dirPath string) error
+	Data() []int
+	Set(data []int)
 }
 
 type maze struct {
@@ -264,4 +268,47 @@ func encodePng(img *image.RGBA, path string) (err error) {
 	defer f.Close()
 	png.Encode(f, img)
 	return
+}
+
+func (m *maze) Set(data []int) {
+	if len(data) != len(m.data) {
+		panic("err")
+	}
+	m.data = data
+}
+
+func (m maze) Data() []int {
+	return m.copy()
+}
+
+func (m *maze) copy() []int {
+	copy := make([]int, len(m.data))
+	for i := range copy {
+		copy[i] = m.data[i]
+	}
+	return copy
+}
+
+// ToGif :
+func ToGif(filename string, w, h, scale, delay int, items [][]int, palette []color.Color) {
+	var images []*image.Paletted
+	var delays []int
+
+	for i := 0; i < len(items); i++ {
+		img := image.NewPaletted(image.Rect(0, 0, w*scale, h*scale), palette)
+		images = append(images, img)
+		delays = append(delays, delay)
+		for x := 0; x < w*scale; x++ {
+			for y := 0; y < h*scale; y++ {
+				img.Set(x, y, palette[items[i][y/scale*w+x/scale]%len(palette)])
+			}
+		}
+	}
+
+	f, _ := os.OpenFile(filename+".gif", os.O_WRONLY|os.O_CREATE, 0600)
+	defer f.Close()
+	gif.EncodeAll(f, &gif.GIF{
+		Image: images,
+		Delay: delays,
+	})
 }
