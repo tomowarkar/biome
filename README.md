@@ -31,10 +31,10 @@ func main() {
 	b.Show()
 
 	d := biome.NewDicts()
-	d.Set(0, biome.Colors["khaki"])
-	d.Set(1, biome.Colors["darkgoldenrod"])
-	d.Set(2, biome.Colors["royalblue"])
-	d.Set(3, biome.Colors["seagreen"])
+	d.Set(0, biome.Khaki)
+	d.Set(1, biome.Darkgoldenrod)
+	d.Set(2, biome.Royalblue)
+	d.Set(3, biome.Seagreen)
 	fmt.Println(d)
 
 	err := b.ToPng(100, d, "image")
