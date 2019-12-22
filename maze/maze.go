@@ -25,7 +25,7 @@ type Maze interface {
 	StickDown(seed int64)
 	Digging(seed int64)
 	Solve()
-	ToPng(scale int, dirPath string) error
+	ToPng(filename string, scale int) error
 	Data() []int
 	Set(data []int)
 }
@@ -243,11 +243,11 @@ func (m *maze) dig(x, y int) {
 	}
 }
 
-func (m *maze) ToPng(scale int, dirPath string) error {
+func (m *maze) ToPng(filename string, scale int) error {
 	d := biome.NewDicts()
-	d.Set(wall, biome.Colors["darkgoldenrod"])
-	d.Set(path, biome.Colors["khaki"])
-	d.Set(route, biome.Colors["magenta"])
+	d.Set(wall, biome.Darkgoldenrod)
+	d.Set(path, biome.Khaki)
+	d.Set(route, biome.Magenta)
 
 	img := image.NewRGBA(image.Rect(0, 0, m.w*scale, m.h*scale))
 	for x := 0; x < m.w*scale; x++ {
@@ -257,7 +257,7 @@ func (m *maze) ToPng(scale int, dirPath string) error {
 			}
 		}
 	}
-	return encodePng(img, dirPath)
+	return encodePng(img, filename)
 }
 
 func encodePng(img *image.RGBA, path string) (err error) {
