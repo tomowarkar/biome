@@ -17,15 +17,15 @@ func DefaultDicts() Dicts {
 	d := NewDicts()
 	for i := 0; i < 256; i++ {
 		if 240 <= i {
-			d.Set(i, color.RGBA{255, 255, 255, 255})
+			d.Set(i, White)
 		} else if 180 <= i {
-			d.Set(i, Colors["seagreen"])
+			d.Set(i, Seagreen)
 		} else if 150 <= i {
-			d.Set(i, Colors["darkgoldenrod"])
+			d.Set(i, Darkgoldenrod)
 		} else if 130 <= i {
-			d.Set(i, Colors["khaki"])
+			d.Set(i, Khaki)
 		} else {
-			d.Set(i, Colors["royalblue"])
+			d.Set(i, Royalblue)
 		}
 	}
 	return d
@@ -36,13 +36,21 @@ func (ds Dicts) Set(number int, color color.RGBA) {
 	ds[number] = color
 }
 
-// Colors ...
-var Colors = map[string]color.RGBA{
-	"khaki":         color.RGBA{240, 230, 140, 255},
-	"darkgoldenrod": color.RGBA{184, 134, 11, 255},
-	"royalblue":     color.RGBA{65, 105, 225, 255},
-	"seagreen":      color.RGBA{46, 139, 87, 255},
-	"cyan":          color.RGBA{0, 255, 255, 255},
-	"magenta":       color.RGBA{255, 0, 255, 255},
-	"yellow":        color.RGBA{255, 255, 0, 255},
-}
+var (
+	// White ...
+	White = color.RGBA{255, 255, 255, 255}
+	// Khaki ...
+	Khaki = color.RGBA{240, 230, 140, 255}
+	// Darkgoldenrod ...
+	Darkgoldenrod = color.RGBA{184, 134, 11, 255}
+	// Royalblue ...
+	Royalblue = color.RGBA{65, 105, 225, 255}
+	// Seagreen ...
+	Seagreen = color.RGBA{46, 139, 87, 255}
+	// Cyan ...
+	Cyan = color.RGBA{0, 255, 255, 255}
+	// Magenta ...
+	Magenta = color.RGBA{255, 0, 255, 255}
+	// Yellow ...
+	Yellow = color.RGBA{255, 255, 0, 255}
+)
