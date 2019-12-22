@@ -87,6 +87,7 @@ func (m *maze) setObj(x, y, obj int) {
 }
 
 func (m *maze) StickDown(seed int64) {
+	var debug [][]int
 	rand.Seed(seed)
 	// 初期データ挿入
 	for y := 0; y < m.h; y++ {
@@ -99,12 +100,14 @@ func (m *maze) StickDown(seed int64) {
 		}
 	}
 	// 迷路生成
+	debug = append(debug, m.copy())
 	for y := 2; y < m.h-2; y += 2 {
 		for x := 2; x < m.w-2; x += 2 {
 			if y == 2 {
 				dirs := []p{up, down, right, left}
 				n := rand.Intn(len(dirs))
 				m.setObj((x + dirs[n].x), (y + dirs[n].y), wall)
+				debug = append(debug, m.copy())
 			} else {
 				dirs := []p{down, right, left}
 				for len(dirs) > 0 {
@@ -113,6 +116,7 @@ func (m *maze) StickDown(seed int64) {
 					dirs = append(dirs[:n], dirs[n+1:]...)
 					if m.at(x+dir.x, y+dir.y) == path {
 						m.setObj((x + dir.x), (y + dir.y), wall)
+						debug = append(debug, m.copy())
 						break
 					}
 				}
@@ -201,6 +205,7 @@ func (m *maze) Digging(seed int64) {
 }
 
 func (m *maze) dig(x, y int) {
+	var debug [][]int
 	cands := []p{{x, y}}
 	for len(cands) > 0 {
 		n := rand.Intn(len(cands))
@@ -234,9 +239,12 @@ func (m *maze) dig(x, y int) {
 				break
 			}
 			m.setObj(cand.x, cand.y, path)
+			debug = append(debug, m.copy())
 			nn := rand.Intn(len(dirs))
 			m.setObj(cand.x+dirs[nn].x, cand.y+dirs[nn].y, path)
+			debug = append(debug, m.copy())
 			m.setObj(cand.x+dirs2[nn].x, cand.y+dirs2[nn].y, path)
+			debug = append(debug, m.copy())
 			cands = append(cands, p{cand.x + dirs2[nn].x, cand.y + dirs2[nn].y})
 			cand = p{cand.x + dirs2[nn].x, cand.y + dirs2[nn].y}
 		}
