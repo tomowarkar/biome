@@ -74,10 +74,48 @@ func main() {
 	m := maze.NewMaze(48, 60)
 	m.StickDown(0)
 	m.Solve()
-	m.ToPng(10, "maze1")
+	m.ToPng("maze1", 10)
 	m.Digging(0)
 	m.Solve()
-	m.ToPng(10, "maze2")
+	m.ToPng("maze2", 10)
+}
+```
+### gif
+```go
+package main
+
+import (
+	"image/color"
+	"time"
+
+	"github.com/tomowarkar/biome"
+	"github.com/tomowarkar/biome/maze"
+)
+
+func main() {
+	w, h := 61, 49
+	m := maze.NewMaze(h, w)
+	var datas [][]int
+
+	for i := 0; i < 10; i++ {
+		seed := time.Now().UnixNano()
+		m.StickDown(seed)
+		datas = append(datas, m.Data())
+		m.Solve()
+		datas = append(datas, m.Data())
+		m.Digging(seed)
+		datas = append(datas, m.Data())
+		m.Solve()
+		datas = append(datas, m.Data())
+	}
+
+	palette := []color.Color{
+		biome.Darkgoldenrod,
+		biome.Khaki,
+		biome.Magenta,
+	}
+
+	maze.ToGif("gif", w, h, 10, 50, datas, palette)
 }
 ```
 ## examples
