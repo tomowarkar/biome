@@ -10,8 +10,6 @@ import (
 	"os"
 	"strconv"
 	"strings"
-
-	"github.com/tomowarkar/biome"
 )
 
 const (
@@ -25,7 +23,7 @@ type Maze interface {
 	StickDown(seed int64)
 	Digging(seed int64)
 	Solve()
-	ToPng(filename string, scale int) error
+	ToPng(filename string, scale int, palette []color.Color) error
 	Data() []int
 	Set(data []int)
 }
@@ -251,18 +249,11 @@ func (m *maze) dig(x, y int) {
 	}
 }
 
-func (m *maze) ToPng(filename string, scale int) error {
-	d := biome.NewDicts()
-	d.Set(wall, biome.Darkgoldenrod)
-	d.Set(path, biome.Khaki)
-	d.Set(route, biome.Magenta)
-
+func (m *maze) ToPng(filename string, scale int, palette []color.Color) error {
 	img := image.NewRGBA(image.Rect(0, 0, m.w*scale, m.h*scale))
 	for x := 0; x < m.w*scale; x++ {
 		for y := 0; y < m.h*scale; y++ {
-			if val, ok := d[m.data[y/scale*m.w+x/scale]]; ok {
-				img.Set(x, y, val)
-			}
+			img.Set(x, y, palette[m.data[y/scale*m.w+x/scale]%len(palette)])
 		}
 	}
 	return encodePng(img, filename)
