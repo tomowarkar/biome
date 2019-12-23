@@ -14,36 +14,7 @@ https://godoc.org/github.com/tomowarkar/biome
 ```
 # assume the following codes in example.go file
 $ cat example.go
-```
-### random map
-```go
-package main
 
-import (
-	"fmt"
-
-	"github.com/tomowarkar/biome"
-)
-
-func main() {
-	b := biome.NewWorld(5, 8)
-	b.RandIntn(4, time.Now().UnixNano())
-	b.Show()
-
-	d := biome.NewDicts()
-	d.Set(0, biome.Khaki)
-	d.Set(1, biome.Darkgoldenrod)
-	d.Set(2, biome.Royalblue)
-	d.Set(3, biome.Seagreen)
-	fmt.Println(d)
-
-	err := b.ToPng(100, d, "image")
-	if err != nil {
-		panic(err)
-	}
-}
-```
-```
 # run example.go
 $ go run example.go
 ```
@@ -52,14 +23,41 @@ $ go run example.go
 package main
 
 import (
+	"image/color"
 	"time"
-	"github.com/tomowarkar/biome"
+
+	"github.com/tomowarkar/biome/fractal"
+)
+
+var (
+	sea    = color.RGBA{65, 105, 225, 255}
+	beach  = color.RGBA{240, 230, 140, 255}
+	island = color.RGBA{184, 134, 11, 255}
+	forest = color.RGBA{46, 139, 87, 255}
+	snow   = color.RGBA{255, 255, 255, 255}
 )
 
 func main() {
-	world := biome.Flactal(32, 48, time.Now().UnixNano())
-	d := biome.DefaultDicts()
-	world.ToPng(10, d, "image")
+	seed := time.Now().UnixNano()
+	world := fractal.Flactal(320, 480, seed)
+
+	var palette []color.Color
+
+	for i := 0; i < 256; i++ {
+		if i < 150 {
+			palette = append(palette, sea)
+		} else if i < 160 {
+			palette = append(palette, beach)
+		} else if i < 190 {
+			palette = append(palette, island)
+		} else if i < 240 {
+			palette = append(palette, forest)
+		} else {
+			palette = append(palette, snow)
+		}
+	}
+
+	world.ToPng("image", 1, palette)
 }
 ```
 ### maze
@@ -67,17 +65,30 @@ func main() {
 package main
 
 import (
+	"image/color"
+	"time"
+
 	"github.com/tomowarkar/biome/maze"
 )
 
 func main() {
-	m := maze.NewMaze(48, 60)
-	m.StickDown(0)
+	mazeWidth, mazeHeight := 37, 27
+	m := maze.NewMaze(mazeHeight, mazeWidth)
+	seed := time.Now().UnixNano()
+
+	palette := []color.Color{
+		color.RGBA{184, 134, 11, 255},
+		color.RGBA{240, 230, 140, 255},
+		color.RGBA{255, 0, 255, 255},
+	}
+
+	m.StickDown(seed)
 	m.Solve()
-	m.ToPng("maze1", 10)
-	m.Digging(0)
+	m.ToPng("maze1", 10, palette)
+
+	m.Digging(seed)
 	m.Solve()
-	m.ToPng("maze2", 10)
+	m.ToPng("maze2", 10, palette)
 }
 ```
 ### gif
@@ -88,7 +99,6 @@ import (
 	"image/color"
 	"time"
 
-	"github.com/tomowarkar/biome"
 	"github.com/tomowarkar/biome/maze"
 )
 
@@ -110,21 +120,19 @@ func main() {
 	}
 
 	palette := []color.Color{
-		biome.Darkgoldenrod,
-		biome.Khaki,
-		biome.Magenta,
+		color.RGBA{184, 134, 11, 255},
+		color.RGBA{240, 230, 140, 255},
+		color.RGBA{255, 0, 255, 255},
 	}
 
 	maze.ToGif("gif", w, h, 10, 50, datas, palette)
 }
 ```
-## examples
-|                 |                                                    |                                                    |                                                     |
-| --------------- | -------------------------------------------------- | -------------------------------------------------- | --------------------------------------------------- |
-| random dots     | <img src="assets/examples/image5.png" width="200"> | <img src="assets/examples/image4.png" width="200"> | <img src="assets/examples/example.png" width="200"> |
-| fractal islands | <img src="assets/examples/image.png" width="200">  | <img src="assets/examples/image3.png" width="200"> | <img src="assets/examples/image2.png" width="200">  |
-| maze            | <img src="assets/examples/maze.png" width="200">   | <img src="assets/examples/maze1.png" width="200">  | <img src="assets/examples/maze2.png" width="200">   |
-| gifs            | <img src="assets/examples/maze.gif" width="200">   | <img src="assets/examples/dig1.gif" width="200">   | <img src="assets/examples/stick1.gif" width="200">  |
+## gallery
+|                 |                                                   |                                                    |                                                    |
+| --------------- | ------------------------------------------------- | -------------------------------------------------- | -------------------------------------------------- |
+| fractal islands | <img src="assets/examples/image.png" width="200"> | <img src="assets/examples/image3.png" width="200"> | <img src="assets/examples/image2.png" width="200"> |
+| maze            | <img src="assets/examples/maze.gif" width="200">  | <img src="assets/examples/dig1.gif" width="200">   | <img src="assets/examples/stick1.gif" width="200"> |
 
 # License
 Biome is free and open-source software licensed under  the Boost Software License, Version 1.0.(See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
