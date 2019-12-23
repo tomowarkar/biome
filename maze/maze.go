@@ -45,29 +45,32 @@ var (
 
 // NewMaze :
 func NewMaze(row, column int) Maze {
-	if row < 7 {
-		row = 7
+	if row < 5 || column < 5 {
+		panic("row and column should bigger than 5.")
 	}
-	if column < 7 {
-		column = 7
+	if row%2 == 0 || column%2 == 0 {
+		panic("row and column should odd number.")
 	}
-	w, h := (column/2)*2+1, (row/2)*2+1
 	return &maze{
-		w:    w,
-		h:    h,
-		data: make([]int, w*h),
+		w:    column,
+		h:    row,
+		data: make([]int, column*row),
 	}
+}
+
+func toStr(n int) string {
+	return strconv.Itoa(n)
 }
 
 func (m maze) plt() {
 	var text []string
 	var strReplacer *strings.Replacer = strings.NewReplacer(
-		"0", "#",
-		"1", " ",
-		"2", ".",
+		toStr(wall), "#",
+		toStr(path), " ",
+		toStr(route), ".",
 	)
 	for _, v := range m.data {
-		text = append(text, strReplacer.Replace(strconv.Itoa(v)))
+		text = append(text, strReplacer.Replace(toStr(v)))
 	}
 
 	for y := 0; y < m.h; y++ {
