@@ -2,11 +2,10 @@ package fractal
 
 import (
 	"fmt"
-	"image"
 	"image/color"
-	"image/png"
 	"math/rand"
-	"os"
+
+	"github.com/tomowarkar/biome"
 )
 
 type field struct {
@@ -18,7 +17,7 @@ type field struct {
 // World ...
 type World interface {
 	Show()
-	ToPng(filename string, scale int, palette []color.Color) error
+	ToPng(filename string, scale int, palette []color.Color)
 	Data() []int
 }
 
@@ -27,12 +26,14 @@ func (f *field) Show() {
 		fmt.Println(f.data[i*f.width : (i+1)*f.width])
 	}
 }
+
 func (f *field) Set(data []int) {
 	if len(data) != len(f.data) {
 		panic("matrix size error")
 	}
 	f.data = data
 }
+
 func (f *field) Data() []int {
 	var data []int
 	for i := range f.data {
@@ -41,24 +42,8 @@ func (f *field) Data() []int {
 	return data
 }
 
-func (f *field) ToPng(filename string, scale int, palette []color.Color) error {
-	img := image.NewRGBA(image.Rect(0, 0, f.width*scale, f.height*scale))
-	for x := 0; x < f.width*scale; x++ {
-		for y := 0; y < f.height*scale; y++ {
-			img.Set(x, y, palette[f.data[y/scale*f.width+x/scale]%len(palette)])
-		}
-	}
-	return encodePng(img, filename)
-}
-
-func encodePng(img *image.RGBA, path string) (err error) {
-	f, err := os.Create(path + ".png")
-	if err != nil {
-		return
-	}
-	defer f.Close()
-	png.Encode(f, img)
-	return
+func (f *field) ToPng(filename string, scale int, palette []color.Color) {
+	biome.ToPng(filename, f.width, f.height, scale, f.data, palette)
 }
 
 // Flactal 中点変位法...

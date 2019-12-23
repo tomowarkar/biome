@@ -2,14 +2,11 @@ package maze
 
 import (
 	"fmt"
-	"image"
 	"image/color"
-	"image/gif"
-	"image/png"
 	"math/rand"
-	"os"
-	"strconv"
 	"strings"
+
+	"github.com/tomowarkar/biome"
 )
 
 const (
@@ -23,7 +20,7 @@ type Maze interface {
 	StickDown(seed int64)
 	Digging(seed int64)
 	Solve()
-	ToPng(filename string, scale int, palette []color.Color) error
+	ToPng(filename string, scale int, palette []color.Color)
 	Data() []int
 	Set(data []int)
 }
@@ -58,19 +55,15 @@ func NewMaze(row, column int) Maze {
 	}
 }
 
-func toStr(n int) string {
-	return strconv.Itoa(n)
-}
-
 func (m maze) plt() {
 	var text []string
 	var strReplacer *strings.Replacer = strings.NewReplacer(
-		toStr(wall), "#",
-		toStr(path), " ",
-		toStr(route), ".",
+		biome.ToStr(wall), "#",
+		biome.ToStr(path), " ",
+		biome.ToStr(route), ".",
 	)
 	for _, v := range m.data {
-		text = append(text, strReplacer.Replace(toStr(v)))
+		text = append(text, strReplacer.Replace(biome.ToStr(v)))
 	}
 
 	for y := 0; y < m.h; y++ {
@@ -252,24 +245,13 @@ func (m *maze) dig(x, y int) {
 	}
 }
 
-func (m *maze) ToPng(filename string, scale int, palette []color.Color) error {
-	img := image.NewRGBA(image.Rect(0, 0, m.w*scale, m.h*scale))
-	for x := 0; x < m.w*scale; x++ {
-		for y := 0; y < m.h*scale; y++ {
-			img.Set(x, y, palette[m.data[y/scale*m.w+x/scale]%len(palette)])
-		}
-	}
-	return encodePng(img, filename)
+func (m *maze) ToPng(filename string, scale int, palette []color.Color) {
+	biome.ToPng(filename, m.w, m.h, scale, m.data, palette)
 }
 
-func encodePng(img *image.RGBA, path string) (err error) {
-	f, err := os.Create(path + ".png")
-	if err != nil {
-		return
-	}
-	defer f.Close()
-	png.Encode(f, img)
-	return
+// ToGif :
+func ToGif(filename string, w, h, scale, delay int, items [][]int, palette []color.Color) {
+	biome.ToGif(filename, w, h, scale, delay, items, palette)
 }
 
 func (m *maze) Set(data []int) {
@@ -289,28 +271,4 @@ func (m *maze) copy() []int {
 		copy[i] = m.data[i]
 	}
 	return copy
-}
-
-// ToGif :
-func ToGif(filename string, w, h, scale, delay int, items [][]int, palette []color.Color) {
-	var images []*image.Paletted
-	var delays []int
-
-	for i := 0; i < len(items); i++ {
-		img := image.NewPaletted(image.Rect(0, 0, w*scale, h*scale), palette)
-		images = append(images, img)
-		delays = append(delays, delay)
-		for x := 0; x < w*scale; x++ {
-			for y := 0; y < h*scale; y++ {
-				img.Set(x, y, palette[items[i][y/scale*w+x/scale]%len(palette)])
-			}
-		}
-	}
-
-	f, _ := os.OpenFile(filename+".gif", os.O_WRONLY|os.O_CREATE, 0600)
-	defer f.Close()
-	gif.EncodeAll(f, &gif.GIF{
-		Image: images,
-		Delay: delays,
-	})
 }
