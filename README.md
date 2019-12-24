@@ -129,10 +129,11 @@ func main() {
 }
 ```
 ## gallery
-|                 |                                                   |                                                    |                                                    |
-| --------------- | ------------------------------------------------- | -------------------------------------------------- | -------------------------------------------------- |
-| fractal islands | <img src="assets/examples/image.png" width="200"> | <img src="assets/examples/image3.png" width="200"> | <img src="assets/examples/image2.png" width="200"> |
-| maze            | <img src="assets/examples/maze.gif" width="200">  | <img src="assets/examples/dig1.gif" width="200">   | <img src="assets/examples/stick1.gif" width="200"> |
+|                                                                            |                                                   |                                                    |                                                    |
+| -------------------------------------------------------------------------- | ------------------------------------------------- | -------------------------------------------------- | -------------------------------------------------- |
+| [fractal islands](https://github.com/tomowarkar/biome/tree/master/fractal) | <img src="assets/examples/image.png" width="200"> | <img src="assets/examples/image3.png" width="200"> | <img src="assets/examples/image2.png" width="200"> |
+| [maze](https://github.com/tomowarkar/biome/tree/master/maze)               | <img src="assets/examples/maze.gif" width="200">  | <img src="assets/examples/dig1.gif" width="200">   | <img src="assets/examples/stick1.gif" width="200"> |
+| [paint](https://github.com/tomowarkar/biome/tree/master/paint)             | <img src="assets/examples/paint.png" width="200"> | <img src="assets/examples/paint2.gif" width="200"> |                                                    |
 
 # License
 Biome is free and open-source software licensed under  the Boost Software License, Version 1.0.(See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
