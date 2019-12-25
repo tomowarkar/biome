@@ -37,7 +37,7 @@ func main() {
 		color.RGBA{255, 0, 255, 255},
 	}
 	// 10倍スケール(210×370)のpng画像を生成(maze.png)
-	m.ToPng("maze", 10, palette)
+	m.ToPng("assets/tmp/maze", 10, palette)
 	// 10倍スケール(210×370)のGIF画像を生成(mazegif.gif)
-	maze.ToGif("mazegif", mazeWidth, mazeHeight, 10, 100, debug, palette)
+	maze.ToGif("assets/tmp/mazegif", mazeWidth, mazeHeight, 10, 100, debug, palette)
 }

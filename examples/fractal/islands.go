@@ -34,5 +34,5 @@ func main() {
 			palette = append(palette, snow)
 		}
 	}
-	world.ToPng("image", 10, palette)
+	world.ToPng("assets/tmp/image", 10, palette)
 }

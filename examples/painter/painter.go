@@ -36,5 +36,5 @@ func main() {
 	cnv.Square(300, 700, 300, 80, white)
 	cnv.Triangle(1000, 300, 300, 10, white)
 	cnv.Fill(1000, 300, blue)
-	cnv.ToPng("paint", palette)
+	cnv.ToPng("assets/tmp/paint", palette)
 }
