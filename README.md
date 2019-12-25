@@ -1,5 +1,5 @@
 # Biome
-Biome is a plane world generation tool written in Go (Golang).
+Biome is  tool of image processing and generatig written in Go (Golang).
 
 # Installation
 Installation is done using `go get`.
@@ -135,6 +135,13 @@ func main() {
 | [maze](https://github.com/tomowarkar/biome/tree/master/maze)               | <img src="assets/examples/maze.gif" width="200">  | <img src="assets/examples/dig1.gif" width="200">   | <img src="assets/examples/stick1.gif" width="200"> |
 | [paint](https://github.com/tomowarkar/biome/tree/master/paint)             | <img src="assets/examples/paint.png" width="200"> | <img src="assets/examples/paint2.gif" width="200"> |                                                    |
 
+## image processing
+|          |                                                           |        |                                                           |
+| -------- | --------------------------------------------------------- | ------ | --------------------------------------------------------- |
+| original | <img src="assets/examples/imgproc.jpg" width="300">       | gray   | <img src="assets/examples/imgproc_gray.png" width="300">  |
+| sepia    | <img src="assets/examples/imgproc_sepia.png" width="300"> | mosaic | <img src="assets/examples/imgproc_shade.png" width="300"> |
+
+original image source  (https://ja.wikipedia.org/wiki/%E9%A2%A8%E6%99%AF )
 # License
 Biome is free and open-source software licensed under  the Boost Software License, Version 1.0.(See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
