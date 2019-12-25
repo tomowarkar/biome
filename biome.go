@@ -4,7 +4,10 @@ import (
 	"image"
 	"image/color"
 	"image/gif"
+	"image/jpeg"
 	"image/png"
+	"log"
+	"net/http"
 	"os"
 )
 
@@ -55,4 +58,37 @@ func ToGif(filename string, images []*image.Paletted, delay int) {
 		Image: images,
 		Delay: delays,
 	})
+}
+
+// ReadImage :
+func ReadImage(path string) (imgSrc image.Image) {
+	rf, err := os.Open(path)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer rf.Close()
+
+	buffer := make([]byte, 512)
+	_, err = rf.Read(buffer)
+	if err != nil {
+		log.Fatal(err)
+	}
+	cType := http.DetectContentType(buffer)
+	rf.Seek(0, 0)
+
+	switch cType {
+	case "image/png":
+		imgSrc, err = png.Decode(rf)
+		if err != nil {
+			log.Fatal(err)
+		}
+	case "image/jpeg":
+		imgSrc, _ = jpeg.Decode(rf)
+		if err != nil {
+			log.Fatal(err)
+		}
+	default:
+		log.Fatal("not defined")
+	}
+	return
 }
