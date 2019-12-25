@@ -121,13 +121,6 @@ func (c *canvas) ToPng(filename string, palette []color.Color) {
 	biome.ToPng(filename, img)
 }
 
-func max(a, b float64) float64 {
-	if a < b {
-		return b
-	}
-	return a
-}
-
 func (c canvas) arc(x, y, r, sAngle, eAngle float64) {
 	// TODO 曲線
 }
@@ -162,7 +155,7 @@ func distL(x, y int, l line) bool {
 	var dx, dy = l.end.x - l.begin.x, l.end.y - l.begin.y
 	var b1, b2 = -dy / dx, dx / dy
 	var c1, c2 = -(b1*mx + my), -(b2*mx + my)
-	r1 := max(l.begin.r, l.end.r)
+	r1 := biome.MaxFloat(l.begin.r, l.end.r)
 	r2 := math.Sqrt(dx*dx+dy*dy) / 2
 	d1 := math.Abs(yy+b1*xx+c1) / math.Sqrt(1+b1*b1)
 	d2 := math.Abs(yy+b2*xx+c2) / math.Sqrt(1+b2*b2)
