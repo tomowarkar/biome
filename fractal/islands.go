@@ -43,7 +43,8 @@ func (f *field) Data() []int {
 }
 
 func (f *field) ToPng(filename string, scale int, palette []color.Color) {
-	biome.ToPng(filename, f.width, f.height, scale, f.data, palette)
+	img := biome.Slice2Image(f.width, f.height, scale, f.data, palette)
+	biome.ToPng(filename, img)
 }
 
 // Flactal 中点変位法...

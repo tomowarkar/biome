@@ -2,6 +2,7 @@ package maze
 
 import (
 	"fmt"
+	"image"
 	"image/color"
 	"math/rand"
 	"strings"
@@ -246,12 +247,19 @@ func (m *maze) dig(x, y int) {
 }
 
 func (m *maze) ToPng(filename string, scale int, palette []color.Color) {
-	biome.ToPng(filename, m.w, m.h, scale, m.data, palette)
+	img := biome.Slice2Image(m.w, m.h, scale, m.data, palette)
+	biome.ToPng(filename, img)
 }
 
 // ToGif :
 func ToGif(filename string, w, h, scale, delay int, items [][]int, palette []color.Color) {
-	biome.ToGif(filename, w, h, scale, delay, items, palette)
+	var images []*image.Paletted
+
+	for _, v := range items {
+		img := biome.Slice2Paletted(w, h, scale, v, palette)
+		images = append(images, img)
+	}
+	biome.ToGif(filename, images, delay)
 }
 
 func (m *maze) Set(data []int) {

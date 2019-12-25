@@ -6,44 +6,47 @@ import (
 	"image/gif"
 	"image/png"
 	"os"
-	"strconv"
 )
 
-// ToPng : １次元Intスライスを元にpng画像を生成
-func ToPng(filename string, width, height, scale int, data []int, palette []color.Color) {
+// TODO: インターフェイスを使ったらSlice2ImageとSlice2Palettedをマージできるかも??
+
+// Slice2Image : １次元Intスライスを元にimage.Imageを生成
+func Slice2Image(width, height, scale int, data []int, palette []color.Color) image.Image {
 	img := image.NewRGBA(image.Rect(0, 0, width*scale, height*scale))
 	for x := 0; x < width*scale; x++ {
 		for y := 0; y < height*scale; y++ {
 			img.Set(x, y, palette[data[y/scale*width+x/scale]%len(palette)])
 		}
 	}
-	encodePng(img, filename)
+	return img
 }
 
-func encodePng(img *image.RGBA, path string) {
-	f, err := os.Create(path + ".png")
+// Slice2Paletted : １次元Intスライスを元にimage.Palettedを生成
+func Slice2Paletted(width, height, scale int, data []int, palette []color.Color) *image.Paletted {
+	img := image.NewPaletted(image.Rect(0, 0, width*scale, height*scale), palette)
+	for x := 0; x < width*scale; x++ {
+		for y := 0; y < height*scale; y++ {
+			img.Set(x, y, palette[data[y/scale*width+x/scale]%len(palette)])
+		}
+	}
+	return img
+}
+
+// ToPng : １次元Intスライスを元にpng画像を生成
+func ToPng(filename string, imgSrc image.Image) {
+	wf, err := os.Create(filename + ".png")
 	if err != nil {
 		panic("encode failed")
 	}
-	defer f.Close()
-	png.Encode(f, img)
-	return
+	defer wf.Close()
+	png.Encode(wf, imgSrc)
 }
 
 // ToGif : 2次元Intスライスを元にGIF画像を生成
-func ToGif(filename string, w, h, scale, delay int, items [][]int, palette []color.Color) {
-	var images []*image.Paletted
+func ToGif(filename string, images []*image.Paletted, delay int) {
 	var delays []int
-
-	for i := 0; i < len(items); i++ {
-		img := image.NewPaletted(image.Rect(0, 0, w*scale, h*scale), palette)
-		images = append(images, img)
+	for i := 0; i < len(images); i++ {
 		delays = append(delays, delay)
-		for x := 0; x < w*scale; x++ {
-			for y := 0; y < h*scale; y++ {
-				img.Set(x, y, palette[items[i][y/scale*w+x/scale]%len(palette)])
-			}
-		}
 	}
 
 	f, _ := os.OpenFile(filename+".gif", os.O_WRONLY|os.O_CREATE, 0600)
@@ -52,9 +55,4 @@ func ToGif(filename string, w, h, scale, delay int, items [][]int, palette []col
 		Image: images,
 		Delay: delays,
 	})
-}
-
-// ToStr : convert int to string
-func ToStr(n int) string {
-	return strconv.Itoa(n)
 }

@@ -117,7 +117,8 @@ func (c *canvas) Fill(x, y int, obj int) {
 }
 
 func (c *canvas) ToPng(filename string, palette []color.Color) {
-	biome.ToPng(filename, c.width, c.height, 1, c.data, palette)
+	img := biome.Slice2Image(c.width, c.height, 1, c.data, palette)
+	biome.ToPng(filename, img)
 }
 
 func max(a, b float64) float64 {
