@@ -22,30 +22,45 @@ func Gray(imgSrc image.Image) image.Image {
 }
 
 // Shade :
-func Shade(oddnum int, imgSrc image.Image) image.Image {
-	if oddnum%2 == 0 || oddnum < 1 {
-		log.Fatal("1より大きい奇数を入れてね")
-	}
-	n := oddnum / 2
+func Shade(num int, imgSrc image.Image) image.Image {
 	w, h := imgSrc.Bounds().Dx(), imgSrc.Bounds().Dy()
 	img := image.NewRGBA(image.Rect(0, 0, w, h))
+	done := make(chan bool, h)
 	for y := 0; y < h; y++ {
-		for x := 0; x < w; x++ {
-			var rr, gg, bb uint32
-			var count float64
-			for i := MaxInt(0, x-n); i < MinInt(w-1, x+n); i++ {
-				for j := MaxInt(0, y-n); j < MinInt(h-1, y+n); j++ {
-					r, g, b, _ := imgSrc.At(i, j).RGBA()
-					rr += r
-					gg += g
-					bb += b
-					count++
-				}
+		go func(line int) {
+			for x := 0; x < w; x++ {
+				r, g, b := calc(x, line, num, w, h, imgSrc)
+				img.Set(x, line, color.RGBA{r, g, b, 255})
 			}
-			img.Set(x, y, color.RGBA{F2uint8(float64(rr) / count), F2uint8(float64(gg) / count), F2uint8(float64(bb) / count), 255})
-		}
+			done <- true
+		}(y)
+	}
+	for i := 0; i < h; i++ {
+		<-done
 	}
 	return img
+}
+
+func calc(x, y, num, w, h int, imgSrc image.Image) (rr, gg, bb uint8) {
+	if num < 2 {
+		log.Fatal("1より大きい奇数を入れてね")
+	}
+	n := num / 2
+	var count float64
+	var r1, g1, b1 uint32
+	for i := MaxInt(0, x-n); i < MinInt(w-1, x+n); i++ {
+		for j := MaxInt(0, y-n); j < MinInt(h-1, y+n); j++ {
+			r, g, b, _ := imgSrc.At(i, j).RGBA()
+			r1 += r
+			g1 += g
+			b1 += b
+			count++
+		}
+	}
+	rr = F2uint8(float64(r1) / count)
+	gg = F2uint8(float64(g1) / count)
+	bb = F2uint8(float64(b1) / count)
+	return
 }
 
 // Sepia :
