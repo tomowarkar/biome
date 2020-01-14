@@ -1,6 +1,8 @@
 package main
 
-import "github.com/tomowarkar/biome"
+import (
+	"github.com/tomowarkar/biome"
+)
 
 func main() {
 	filename := "assets/examples/imgproc.jpg"
@@ -12,5 +14,4 @@ func main() {
 	biome.ToPng("assets/tmp/imgproc_sepia", sepia)
 	mosaic := biome.Shade(21, imgSrc)
 	biome.ToPng("assets/tmp/imgproc_mosaic", mosaic)
-
 }

@@ -16,7 +16,7 @@ func main() {
 		color.RGBA{0, 255, 255, 255},
 		color.RGBA{255, 255, 0, 255},
 	}
-	img := biome.Slice2Image(w, h, 10, data, palette)
+	img := biome.Slice2Image(biome.Biome{W: w, H: h, Data: data}, 10, palette)
 	biome.ToPng("assets/tmp/fuck", img)
 
 	var images []*image.Paletted
@@ -25,7 +25,8 @@ func main() {
 		for j := 0; j < w*h; j++ {
 			data[j] = rand.Intn(len(palette))
 		}
-		images = append(images, biome.Slice2Paletted(w, h, 10, data, palette))
+		images = append(images,
+			biome.Slice2Paletted(biome.Biome{W: w, H: h, Data: data}, 10, palette))
 	}
 	biome.ToGif("assets/tmp/hogeg", images, 100)
 }
