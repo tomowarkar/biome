@@ -43,18 +43,18 @@ func gradation(ratio float64) color.RGBA {
 }
 
 // DebugData ...
-func DebugData(width, height, scale int, data []int) {
-	dataMax := max(data)
-	dataMin := min(data)
+func DebugData(biome Biome, scale int) {
+	dataMax := max(biome.Data)
+	dataMin := min(biome.Data)
 	if dataMax-dataMin == 0 {
 		dataMax++
 	}
 
-	img := image.NewRGBA(image.Rect(0, 0, width*scale, height*scale))
-	for y := 0; y < height*scale; y++ {
-		for x := 0; x < width*scale; x++ {
+	img := image.NewRGBA(image.Rect(0, 0, biome.W*scale, biome.H*scale))
+	for y := 0; y < biome.H*scale; y++ {
+		for x := 0; x < biome.W*scale; x++ {
 			var num float64
-			ndata := data[y/scale*width+x/scale]
+			ndata := biome.Data[y/scale*biome.W+x/scale]
 			num = 100 / float64(dataMax-dataMin) * float64(ndata)
 			img.Set(x, y, gradation(num))
 		}
