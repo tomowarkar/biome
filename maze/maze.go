@@ -27,9 +27,7 @@ type Maze interface {
 }
 
 type maze struct {
-	w    int
-	h    int
-	data []int
+	b biome.Biome
 }
 
 type p struct{ x, y int }
@@ -50,9 +48,11 @@ func NewMaze(row, column int) Maze {
 		panic("row and column should odd number.")
 	}
 	return &maze{
-		w:    column,
-		h:    row,
-		data: make([]int, column*row),
+		biome.Biome{
+			W:    column,
+			H:    row,
+			Data: make([]int, column*row),
+		},
 	}
 }
 
@@ -63,31 +63,31 @@ func (m maze) plt() {
 		biome.ToStr(path), " ",
 		biome.ToStr(route), ".",
 	)
-	for _, v := range m.data {
+	for _, v := range m.b.Data {
 		text = append(text, strReplacer.Replace(biome.ToStr(v)))
 	}
 
-	for y := 0; y < m.h; y++ {
-		fmt.Println(strings.Join(text[y*m.w:(y+1)*m.w], " "))
+	for y := 0; y < m.b.H; y++ {
+		fmt.Println(strings.Join(text[y*m.b.W:(y+1)*m.b.W], " "))
 	}
 	fmt.Println()
 }
 
 func (m maze) at(x, y int) int {
-	return m.data[y*m.w+x]
+	return m.b.Data[y*m.b.W+x]
 }
 
 func (m *maze) setObj(x, y, obj int) {
-	m.data[y*m.w+x] = obj
+	m.b.Data[y*m.b.W+x] = obj
 }
 
 func (m *maze) StickDown(seed int64) {
 	var debug [][]int
 	rand.Seed(seed)
 	// 初期データ挿入
-	for y := 0; y < m.h; y++ {
-		for x := 0; x < m.w; x++ {
-			if x == 0 || x == m.w-1 || y == 0 || y == m.h-1 || (x%2 == 0 && y%2 == 0) {
+	for y := 0; y < m.b.H; y++ {
+		for x := 0; x < m.b.W; x++ {
+			if x == 0 || x == m.b.W-1 || y == 0 || y == m.b.H-1 || (x%2 == 0 && y%2 == 0) {
 				m.setObj(x, y, wall)
 			} else {
 				m.setObj(x, y, path)
@@ -96,8 +96,8 @@ func (m *maze) StickDown(seed int64) {
 	}
 	// 迷路生成
 	debug = append(debug, m.copy())
-	for y := 2; y < m.h-2; y += 2 {
-		for x := 2; x < m.w-2; x += 2 {
+	for y := 2; y < m.b.H-2; y += 2 {
+		for x := 2; x < m.b.W-2; x += 2 {
 			if y == 2 {
 				dirs := []p{up, down, right, left}
 				n := rand.Intn(len(dirs))
@@ -122,54 +122,54 @@ func (m *maze) StickDown(seed int64) {
 }
 
 func (m *maze) Solve() {
-	start, goal := p{0, 1}, p{m.w - 2, m.h - 2}
-	visited := make([]bool, len(m.data))
-	costs := make([]int, len(m.data))
+	start, goal := p{0, 1}, p{m.b.W - 2, m.b.H - 2}
+	visited := make([]bool, len(m.b.Data))
+	costs := make([]int, len(m.b.Data))
 	for i := 0; i < len(costs); i++ {
-		costs[i] = len(m.data)
+		costs[i] = len(m.b.Data)
 	}
 	queue := []p{start}
-	costs[start.y*m.w+start.x] = 0
+	costs[start.y*m.b.W+start.x] = 0
 
 	for len(queue) > 0 {
 		pos := queue[0]
 		queue = queue[1:]
-		visited[pos.y*m.w+pos.x] = true
+		visited[pos.y*m.b.W+pos.x] = true
 
 		for _, v := range []p{up, down, right, left} {
 			x, y := pos.x+v.x, pos.y+v.y
 			currP := p{x, y}
-			if x < 0 || y < 0 || x > m.w-1 || y > m.h-1 {
+			if x < 0 || y < 0 || x > m.b.W-1 || y > m.b.H-1 {
 				continue
 			}
 			if goal == currP {
 				queue = make([]p, 0)
-				costs[y*m.w+x] = costs[pos.y*m.w+pos.x] + 1
+				costs[y*m.b.W+x] = costs[pos.y*m.b.W+pos.x] + 1
 				break
 			}
-			if m.at(x, y) == path && visited[y*m.w+x] == false {
+			if m.at(x, y) == path && visited[y*m.b.W+x] == false {
 				queue = append(queue, currP)
-				costs[y*m.w+x] = costs[pos.y*m.w+pos.x] + 1
+				costs[y*m.b.W+x] = costs[pos.y*m.b.W+pos.x] + 1
 			}
 		}
 	}
 
 	point := goal
-	cost := costs[goal.y*m.w+goal.x]
-	if cost == len(m.data) {
+	cost := costs[goal.y*m.b.W+goal.x]
+	if cost == len(m.b.Data) {
 		return
 	}
-	m.data[goal.y*m.w+goal.x] = route
+	m.b.Data[goal.y*m.b.W+goal.x] = route
 	for cost > 1 {
 		for _, v := range []p{up, down, right, left} {
 			x, y := point.x+v.x, point.y+v.y
-			if x < 0 || y < 0 || x > m.w-1 || y > m.h-1 {
+			if x < 0 || y < 0 || x > m.b.W-1 || y > m.b.H-1 {
 				continue
 			}
-			if costs[y*m.w+x] == cost-1 {
-				cost = costs[y*m.w+x]
+			if costs[y*m.b.W+x] == cost-1 {
+				cost = costs[y*m.b.W+x]
 				point = p{x, y}
-				m.data[y*m.w+x] = route
+				m.b.Data[y*m.b.W+x] = route
 				break
 			}
 		}
@@ -179,9 +179,9 @@ func (m *maze) Solve() {
 
 func (m *maze) Digging(seed int64) {
 	rand.Seed(seed)
-	for y := 0; y < m.h; y++ {
-		for x := 0; x < m.w; x++ {
-			if x == 0 || y == 0 || x == m.w-1 || y == m.h-1 {
+	for y := 0; y < m.b.H; y++ {
+		for x := 0; x < m.b.W; x++ {
+			if x == 0 || y == 0 || x == m.b.W-1 || y == m.b.H-1 {
 				m.setObj(x, y, path)
 			} else {
 				m.setObj(x, y, wall)
@@ -189,9 +189,9 @@ func (m *maze) Digging(seed int64) {
 		}
 	}
 	m.dig(1, 1)
-	for y := 0; y < m.h; y++ {
-		for x := 0; x < m.w; x++ {
-			if x == 0 || y == 0 || x == m.w-1 || y == m.h-1 {
+	for y := 0; y < m.b.H; y++ {
+		for x := 0; x < m.b.W; x++ {
+			if x == 0 || y == 0 || x == m.b.W-1 || y == m.b.H-1 {
 				m.setObj(x, y, wall)
 			}
 		}
@@ -247,7 +247,7 @@ func (m *maze) dig(x, y int) {
 }
 
 func (m *maze) ToPng(filename string, scale int, palette []color.Color) {
-	img := biome.Slice2Image(m.w, m.h, scale, m.data, palette)
+	img := biome.Slice2Image(m.b, scale, palette)
 	biome.ToPng(filename, img)
 }
 
@@ -256,17 +256,17 @@ func ToGif(filename string, w, h, scale, delay int, items [][]int, palette []col
 	var images []*image.Paletted
 
 	for _, v := range items {
-		img := biome.Slice2Paletted(w, h, scale, v, palette)
+		img := biome.Slice2Paletted(biome.Biome{W: w, H: h, Data: v}, scale, palette)
 		images = append(images, img)
 	}
 	biome.ToGif(filename, images, delay)
 }
 
 func (m *maze) Set(data []int) {
-	if len(data) != len(m.data) {
+	if len(data) != len(m.b.Data) {
 		panic("err")
 	}
-	m.data = data
+	m.b.Data = data
 }
 
 func (m maze) Data() []int {
@@ -274,9 +274,9 @@ func (m maze) Data() []int {
 }
 
 func (m *maze) copy() []int {
-	copy := make([]int, len(m.data))
+	copy := make([]int, len(m.b.Data))
 	for i := range copy {
-		copy[i] = m.data[i]
+		copy[i] = m.b.Data[i]
 	}
 	return copy
 }

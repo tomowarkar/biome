@@ -11,25 +11,32 @@ import (
 	"os"
 )
 
+// Biome ...
+type Biome struct {
+	W    int
+	H    int
+	Data []int
+}
+
 // TODO: インターフェイスを使ったらSlice2ImageとSlice2Palettedをマージできるかも??
 
 // Slice2Image : １次元Intスライスを元にimage.Imageを生成
-func Slice2Image(width, height, scale int, data []int, palette []color.Color) image.Image {
-	img := image.NewRGBA(image.Rect(0, 0, width*scale, height*scale))
-	for x := 0; x < width*scale; x++ {
-		for y := 0; y < height*scale; y++ {
-			img.Set(x, y, palette[data[y/scale*width+x/scale]%len(palette)])
+func Slice2Image(biome Biome, scale int, palette []color.Color) image.Image {
+	img := image.NewRGBA(image.Rect(0, 0, biome.W*scale, biome.H*scale))
+	for x := 0; x < biome.W*scale; x++ {
+		for y := 0; y < biome.H*scale; y++ {
+			img.Set(x, y, palette[biome.Data[y/scale*biome.W+x/scale]%len(palette)])
 		}
 	}
 	return img
 }
 
 // Slice2Paletted : １次元Intスライスを元にimage.Palettedを生成
-func Slice2Paletted(width, height, scale int, data []int, palette []color.Color) *image.Paletted {
-	img := image.NewPaletted(image.Rect(0, 0, width*scale, height*scale), palette)
-	for x := 0; x < width*scale; x++ {
-		for y := 0; y < height*scale; y++ {
-			img.Set(x, y, palette[data[y/scale*width+x/scale]%len(palette)])
+func Slice2Paletted(biome Biome, scale int, palette []color.Color) *image.Paletted {
+	img := image.NewPaletted(image.Rect(0, 0, biome.W*scale, biome.H*scale), palette)
+	for x := 0; x < biome.W*scale; x++ {
+		for y := 0; y < biome.H*scale; y++ {
+			img.Set(x, y, palette[biome.Data[y/scale*biome.W+x/scale]%len(palette)])
 		}
 	}
 	return img

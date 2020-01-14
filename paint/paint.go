@@ -19,9 +19,7 @@ type Canvas interface {
 }
 
 type canvas struct {
-	height int
-	width  int
-	data   []int
+	b biome.Biome
 }
 
 type point struct {
@@ -35,9 +33,11 @@ type line struct {
 // NewCanv :
 func NewCanv(width, height int) Canvas {
 	return &canvas{
-		height: height,
-		width:  width,
-		data:   make([]int, height*width),
+		biome.Biome{
+			H:    height,
+			W:    width,
+			Data: make([]int, height*width),
+		},
 	}
 }
 
@@ -98,8 +98,8 @@ func (c *canvas) Square(x, y int, px, deg float64, obj int) {
 
 func (c *canvas) Data() []int {
 	var data []int
-	for i := range c.data {
-		data = append(data, c.data[i])
+	for i := range c.b.Data {
+		data = append(data, c.b.Data[i])
 	}
 	return data
 }
@@ -117,7 +117,7 @@ func (c *canvas) Fill(x, y int, obj int) {
 }
 
 func (c *canvas) ToPng(filename string, palette []color.Color) {
-	img := biome.Slice2Image(c.width, c.height, 1, c.data, palette)
+	img := biome.Slice2Image(c.b, 1, palette)
 	biome.ToPng(filename, img)
 }
 
@@ -126,7 +126,7 @@ func (c canvas) arc(x, y, r, sAngle, eAngle float64) {
 }
 
 func (c canvas) fill(x, y, obj int) {
-	target := c.data[y*c.width+x]
+	target := c.b.Data[y*c.b.W+x]
 
 	dx := [4]int{1, 0, -1, 0}
 	dy := [4]int{0, 1, 0, -1}
@@ -137,12 +137,12 @@ func (c canvas) fill(x, y, obj int) {
 		now, queue = queue[0], queue[1:]
 		for i := 0; i < 4; i++ {
 			xx, yy := now[0]+dx[i], now[1]+dy[i]
-			if xx < 0 || yy < 0 || xx > c.width-1 || yy > c.height-1 {
+			if xx < 0 || yy < 0 || xx > c.b.W-1 || yy > c.b.H-1 {
 				continue
 			}
-			if c.data[yy*c.width+xx] == target {
+			if c.b.Data[yy*c.b.W+xx] == target {
 				queue = append(queue, [2]int{xx, yy})
-				c.data[yy*c.width+xx] = obj
+				c.b.Data[yy*c.b.W+xx] = obj
 			}
 		}
 	}
@@ -178,10 +178,10 @@ func distL(x, y int, l line) bool {
 
 // TODO 全面参照ではなく、範囲を絞って描画
 func (c canvas) line(l line, obj int) {
-	for y := 0; y < c.height; y++ {
-		for x := 0; x < c.width; x++ {
+	for y := 0; y < c.b.H; y++ {
+		for x := 0; x < c.b.W; x++ {
 			if distL(x, y, l) {
-				c.data[y*c.width+x] = obj
+				c.b.Data[y*c.b.W+x] = obj
 			}
 		}
 	}
@@ -198,10 +198,10 @@ func distP(x, y int, p point) bool {
 
 // TODO 全面参照ではなく、範囲を絞って描画
 func (c canvas) dot(p point, obj int) {
-	for y := 0; y < c.height; y++ {
-		for x := 0; x < c.width; x++ {
+	for y := 0; y < c.b.H; y++ {
+		for x := 0; x < c.b.W; x++ {
 			if distP(x, y, p) {
-				c.data[y*c.width+x] = obj
+				c.b.Data[y*c.b.W+x] = obj
 			}
 		}
 	}
